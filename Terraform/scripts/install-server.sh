@@ -24,20 +24,17 @@ sudo resize2fs /dev/sda2
 # Ajout de la VM à l'inventaire FreeIPA
 sudo ipa-client-install --unattended --principal admin --password '@Password1234' --domain infra.blt --ntp-server 0.fr.pool.ntp.org,1.fr.pool.ntp.org,2.fr.pool.ntp.org,3.fr.pool.ntp.org --ntp-pool pool.ntp.org --mkhomedir --enable-dns-updates
 
-# Installation de l'agent Zabbix
+# Installation de l'agent Zabbix et package permettant d'ajouter un certificat à Firefox
 sudo mkdir /tmp/zabbix
 sudo cd /tmp/zabbix
 sudo wget https://repo.zabbix.com/zabbix/6.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.0-3+ubuntu22.04_all.deb
 sudo dpkg -i zabbix-release_6.0-3+ubuntu22.04_all.deb
 sudo apt update
-sudo apt install zabbix-agent -y
+sudo apt install zabbix-agent libnss3-tools xvfb -y
 sudo sed -i 's/^Server=127.0.0.1/Server=192.168.100.14/g' /etc/zabbix/zabbix_agentd.conf
 sudo sed -i 's/^ServerActive=127.0.0.1/ServerActive=192.168.100.14/g' /etc/zabbix/zabbix_agentd.conf
 sudo systemctl restart zabbix-agent
 sudo systemctl enable zabbix-agent
-
-# Package permettant d'ajouter un certificat à Firefox
-sudo apt update && sudo apt install libnss3-tools xvfb -y
 
 # Télécharger le certificat de FreeIPA
 sudo mkdir -p /opt/ssl
